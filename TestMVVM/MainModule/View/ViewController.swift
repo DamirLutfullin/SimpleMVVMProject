@@ -6,22 +6,29 @@
 //
 
 import UIKit
+import Combine
 
 class ViewController: UIViewController {
     
     @IBOutlet var label: UILabel!
     
-    let viewModel = MainViewModel()
+    var viewModel: MainViewModel!
     
     override func viewDidLoad() {
+        self.viewModel = MainViewModel()
         super.viewDidLoad()
         bining()
     }
     
-    private func bining () {
-        viewModel.updateViewData = { [weak self] text in
-            self?.label.text = text
-        }
+    var cancelebleSet = Set<AnyCancellable>()
+    
+    func bining() {
+        viewModel.$updateViewData
+            .receive(on: RunLoop.main)
+            .sink { [weak self] (char) in
+                self?.label.text = char
+            }
+            .store(in: &cancelebleSet)
     }
     
     @IBAction func refresh() {
@@ -31,6 +38,4 @@ class ViewController: UIViewController {
     @IBAction func error() {
         viewModel.getError()
     }
-    
 }
-

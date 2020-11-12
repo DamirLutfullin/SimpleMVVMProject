@@ -6,29 +6,24 @@
 //
 
 import Foundation
+import Combine
 
 protocol MainViewModelProtocol {
-    var updateViewData: ((String) -> ())? {get set}
+    var updateViewData: String { get set }
     func startFetch()
     func getError()
 }
 
-final class MainViewModel: MainViewModelProtocol {
-    
-    
-    var updateViewData: ((String) -> ())?
-    
-    init() {
-        updateViewData?("")
-    }
+final class MainViewModel: MainViewModelProtocol, ObservableObject {
+
+    @Published var updateViewData: String = ""
     
     func startFetch() {
-        // start loading
-        updateViewData?("start")
+        self.updateViewData = "start"
     }
     
     func getError() {
-        updateViewData?("error")
+        self.updateViewData = "error"
     }
 }
 
